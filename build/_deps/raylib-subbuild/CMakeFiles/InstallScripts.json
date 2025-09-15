@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"E:/Cpp/Necromunda2D/build/_deps/raylib-subbuild/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
