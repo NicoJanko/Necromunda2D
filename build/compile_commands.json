@@ -7,6 +7,12 @@
 },
 {
   "directory": "/home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/build",
+  "command": "/usr/bin/g++-14 -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/include -I/home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/build/_deps/raylib-src/src -I/home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/build/_deps/raylib-src/src/external/glfw/include -g -std=gnu++17 -o CMakeFiles/necro2d.dir/src/camera.cpp.o -c /home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/src/camera.cpp",
+  "file": "/home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/src/camera.cpp",
+  "output": "CMakeFiles/necro2d.dir/src/camera.cpp.o"
+},
+{
+  "directory": "/home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/build",
   "command": "/usr/bin/gcc-14 -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/build/_deps/raylib-src/src -isystem /home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/build/_deps/raylib-src/src/external/glfw/include -fno-strict-aliasing -Werror=implicit-function-declaration -Werror=pointer-arith  -g -std=gnu99 -o _deps/raylib-build/raylib/CMakeFiles/raylib.dir/raudio.c.o -c /home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/build/_deps/raylib-src/src/raudio.c",
   "file": "/home/njankovsky/Documents/Test/Necromunda2D/Necromunda2D/build/_deps/raylib-src/src/raudio.c",
   "output": "_deps/raylib-build/raylib/CMakeFiles/raylib.dir/raudio.c.o"

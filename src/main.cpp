@@ -14,11 +14,18 @@
 *   Copyright (c) 2022-2025 Jeffery Myers (@JeffM2501)
 *
 ********************************************************************************************/
+#include "camera.h"
+#include "object.h"
+#include "actions.h"
+#include "world.h"
+
+
 #include <iostream>
-#include "raylib.h"z
+#include "raylib.h"
 
 #include "rlgl.h"
 #include "raymath.h"
+#include "json.hpp"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -29,86 +36,43 @@ int main ()
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
+    
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera mouse zoom");
+    InitWindow(screenWidth, screenHeight, "Necro2D");
     Vector2 ballPosition = { (float)screenWidth/2, (float)screenHeight/2 };
     Camera2D camera = { 0 };
     camera.zoom = 1.0f;
 
-    int zoomMode = 0;   // 0-Mouse Wheel, 1-Mouse Move
+    //int zoomMode = 0;   // 0-Mouse Wheel, 1-Mouse Move
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
-
+    std::vector<Building> buildings{BuildBuildings()};
+    
+    Actor actor;
+    actor.pos.x = 60.0f;
+    actor.pos.y = 60.0f;
+    actor.radius = 14.0f;
+    actor.moveMax = 180.0f;
+    actor.moveLeft = actor.moveMax;
     // Main game loop
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
+        float dt = GetFrameTime();
+        Vector2 mouse = GetMousePosition();
         // Update
         //----------------------------------------------------------------------------------
-        if (IsKeyPressed(KEY_ONE)) zoomMode = 0;
-        else if (IsKeyPressed(KEY_TWO)) zoomMode = 1;
+        //camera works
+        SetCamera(camera);
 
-        // Translate based on mouse right click
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-        {
-            Vector2 delta = GetMouseDelta();
-            delta = Vector2Scale(delta, -1.0f/camera.zoom);
-            camera.target = Vector2Add(camera.target, delta);
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            actor.target = mouse;      // world == screen for now (no camera transform used)
+            // If target is inside a building, we still try: movement/collision will stop us at the edge.
+            actor.moving = true;
         }
-
-        if (zoomMode == 0)
-        {
-            // Zoom based on mouse wheel
-            float wheel = GetMouseWheelMove();
-            if (wheel != 0)
-            {
-                // Get the world point that is under the mouse
-                Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
-
-                // Set the offset to where the mouse is
-                camera.offset = GetMousePosition();
-
-                // Set the target to match, so that the camera maps the world space point
-                // under the cursor to the screen space point under the cursor at any zoom
-                camera.target = mouseWorldPos;
-
-                // Zoom increment
-                // Uses log scaling to provide consistent zoom speed
-                float scale = 0.2f*wheel;
-                camera.zoom = Clamp(expf(logf(camera.zoom)+scale), 0.125f, 64.0f);
-            }
-        }
-        else
-        {
-            // Zoom based on mouse right click
-            if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
-            {
-                // Get the world point that is under the mouse
-                Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
-
-                // Set the offset to where the mouse is
-                camera.offset = GetMousePosition();
-
-                // Set the target to match, so that the camera maps the world space point
-                // under the cursor to the screen space point under the cursor at any zoom
-                camera.target = mouseWorldPos;
-            }
-            if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
-            {
-                // Zoom increment
-                // Uses log scaling to provide consistent zoom speed
-                float deltaX = GetMouseDelta().x;
-                float scale = 0.005f*deltaX;
-                camera.zoom = Clamp(expf(logf(camera.zoom)+scale), 0.125f, 64.0f);
-            }
-        }
-
+        UpdateMouvement(actor,dt);
         //Update ball position
 
-        if (IsKeyDown(KEY_RIGHT)) ballPosition.x += 2.0f;
-        if (IsKeyDown(KEY_LEFT)) ballPosition.x -= 2.0f;
-        if (IsKeyDown(KEY_UP)) ballPosition.y -= 2.0f;
-        if (IsKeyDown(KEY_DOWN)) ballPosition.y += 2.0f;
 
         //----------------------------------------------------------------------------------
 
@@ -116,6 +80,11 @@ int main ()
         //----------------------------------------------------------------------------------
         BeginDrawing();
             ClearBackground(RAYWHITE);
+
+            for (auto& b : buildings) {
+                DrawRectangleRec(b.r, Color{70, 80, 110, 255});
+                DrawRectangleLinesEx(b.r, 2, Color{110, 130, 170, 255});
+            }
 
             BeginMode2D(camera);
 
@@ -128,10 +97,23 @@ int main ()
                 rlPopMatrix();
                 //Vector2 mousePos = GetWorldToScreen2D(GetMousePosition(), camera)
                 //Draw the red circle here as it is a world object
-                DrawCircleV(ballPosition, 50, MAROON);
+                if (actor.moving) {
+                    DrawCircleV(actor.target, 4, Color{ 255, 200, 60, 255 });
+                    DrawLineV(actor.pos, actor.target, Color{ 255, 200, 60, 180 });
+                }
+                DrawCircleV(actor.pos, actor.radius, Color{ 230, 80, 90, 255 });
+                DrawCircleLinesV(actor.pos, actor.radius, Color{ 255, 160, 170, 255 });
+
+                        // Simple movement bar
+                float barW = 240.f;
+                float ratio = (actor.moveMax <= 0.0f) ? 0.0f : (actor.moveLeft / actor.moveMax);
+                ratio = Clamp(ratio, 0.0f, 1.0f);
+                DrawRectangle(12, 84, (int)(barW), 12, Color{50,50,60,255});
+                DrawRectangle(12, 84, (int)(barW*ratio), 12, Color{120,220,160,255});
+                DrawRectangleLines(12, 84, (int)barW, 12, Color{180,180,200,255});
                 //get the position of the ball
-                DrawTextEx(GetFontDefault(), TextFormat("[%.0f, %.0f]", ballPosition.x, ballPosition.y),
-                Vector2Add((Vector2) {ballPosition.x, ballPosition.y}, (Vector2){ -44, -24 }), 20, 2, RED);
+                //DrawTextEx(GetFontDefault(), TextFormat("[%.0f, %.0f]", ballPosition.x, ballPosition.y),
+                //Vector2Add((Vector2) {ballPosition.x, ballPosition.y}, (Vector2){ -44, -24 }), 20, 2, RED);
 
                 // Draw a small reference circle
                 DrawCircle(GetScreenWidth()/20, GetScreenHeight()/20, 50, BLUE);
@@ -147,10 +129,6 @@ int main ()
             DrawCircleV(GetMousePosition(), 4, DARKGRAY);
             DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
                 Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
-
-            DrawText("[1][2] Select mouse zoom mode (Wheel or Move)", 20, 20, 20, DARKGRAY);
-            if (zoomMode == 0) DrawText("Mouse left button drag to move, mouse wheel to zoom", 20, 50, 20, DARKGRAY);
-            else DrawText("Mouse left button drag to move, mouse press and move to zoom", 20, 50, 20, DARKGRAY);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

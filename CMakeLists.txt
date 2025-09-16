@@ -8,6 +8,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # static build
 set(BUILD_SHARED_LIBS OFF)
 
+# src
+set(SRCS
+  src/main.cpp
+  src/camera.cpp
+  src/actions.cpp
+  src/object.h
+  src/world.cppd
+)
+
 # raylib
 include(FetchContent)
 FetchContent_Declare(
@@ -20,7 +29,7 @@ FetchContent_MakeAvailable(raylib)
 
 # main exe
 add_executable(necro2d
-  src/main.cpp
+  ${SRCS}
 )
 
 target_include_directories(necro2d PRIVATE ${CMAKE_SOURCE_DIR}/include)
