@@ -1,0 +1,33 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": { "major": 3, "minor": 20 },
+    "configurePresets": [
+      {
+        "name": "linux-gcc14-debug",
+        "displayName": "Linux GCC 14 (Debug)",
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/linux-debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_C_COMPILER": "/usr/bin/gcc-14",
+          "CMAKE_CXX_COMPILER": "/usr/bin/g++-14"
+        }
+      },
+      {
+        "name": "windows-mingw64-debug",
+        "displayName": "Windows MinGW-w64 (Debug)",
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/windows-mingw-debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_C_COMPILER": "C:/msys64/mingw64/bin/gcc.exe",
+          "CMAKE_CXX_COMPILER": "C:/msys64/mingw64/bin/g++.exe"
+        }
+      }
+    ],
+    "buildPresets": [
+      { "name": "linux-build", "configurePreset": "linux-gcc14-debug" },
+      { "name": "windows-build", "configurePreset": "windows-mingw64-debug" }
+    ]
+  }
+  
