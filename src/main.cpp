@@ -103,14 +103,7 @@ int main ()
             BeginMode2D(camera);
 
 
-                for (int x = 0; x <= (int)world.width; ++x) {
-                    int X = (int)(x * ppi);
-                     DrawLine(X, 0, X, (int)H, Fade(WHITE, 0.08f));
-                    }
-                for (int y = 0; y <= (int)world.height; ++y) {
-                    int Y = (int)(y * ppi);
-                    DrawLine(0, Y, (int)W, Y, Fade(WHITE, 0.08f));
-                    }
+                DrawInchGrid(ppi,world.width,world.height);
 
                 // (optional) board outline
                 DrawRectangleLinesEx({0, 0, W, H}, 2, LIGHTGRAY);

@@ -11,6 +11,8 @@
 
 float ComputePpiToFitBoard(const int& screenW, const int& screenH, const float& boardW_in, const float& boardH_in, const float& margin_px = 40.0f);
 
+void DrawInchGrid(float ppi, int boardW_in, int boardH_in);
+
 World GetWorld();
 
 std::vector<Building> BuildBuildings(const float& ppi);

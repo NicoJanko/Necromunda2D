@@ -20,6 +20,30 @@ float ComputePpiToFitBoard(const int& screenW, const int& screenH, const float& 
     return std::min(ppiW, ppiH);
 };
 
+void DrawInchGrid(float ppi, int boardW_in, int boardH_in) {
+    const float W = boardW_in * ppi;
+    const float H = boardH_in * ppi;
+
+    // background (optional)
+    // DrawRectangle(0, 0, (int)W, (int)H, Fade(RAYWHITE, 0.02f));
+
+    // vertical lines (every 1")
+    for (int x = 0; x <= boardW_in; ++x) {
+        int X = (int)(x * ppi);
+        bool major = (x % 6 == 0);
+        DrawLine(X, 0, X, (int)H, major ? Fade(BLACK, 0.18f) : Fade(BLACK, 0.08f));
+    }
+    // horizontal lines (every 1")
+    for (int y = 0; y <= boardH_in; ++y) {
+        int Y = (int)(y * ppi);
+        bool major = (y % 6 == 0);
+        DrawLine(0, Y, (int)W, Y, major ? Fade(BLACK, 0.18f) : Fade(BLACK, 0.08f));
+    }
+
+    // board outline
+    DrawRectangleLinesEx(Rectangle{0,0,W,H}, 2, GRAY);
+};
+
 World GetWorld() {
     std::ifstream f("resource/maps/map1.json");
     nlohmann::json J;
