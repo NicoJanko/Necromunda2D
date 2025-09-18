@@ -9,7 +9,11 @@
 
 #include <vector>
 
-std::vector<Building> BuildBuildings();
+float ComputePpiToFitBoard(const int& screenW, const int& screenH, const float& boardW_in, const float& boardH_in, const float& margin_px = 40.0f);
+
+World GetWorld();
+
+std::vector<Building> BuildBuildings(const float& ppi);
 
 
 

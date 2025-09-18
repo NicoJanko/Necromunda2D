@@ -14,8 +14,8 @@ static bool CircleRectCollide(Vector2 center, float radius, Rectangle rec) {
     return CheckCollisionCircleRec(center, radius, rec);
 }
 
-// const std::vector<Building>& B, 
-void UpdateMouvement(Actor& actor,float dt) {
+// , 
+void UpdateMouvement(Actor& actor,const std::vector<Building>& B,float dt) {
     // is there move left
     if (!actor.moving || actor.moveLeft <= 0.0f) {
         actor.moving = false;
@@ -37,14 +37,14 @@ void UpdateMouvement(Actor& actor,float dt) {
         float thisStep = fminf(subStep, step - moved);
         ::Vector2 nextPos = Vector2Add(actor.pos, Vector2Scale(dir, thisStep));
 
-        //bool hit = false;
-        //for (auto& b : B) {
-        //    if (CircleRectCollide(nextPos, actor.radius, b.r)) { hit = true; break; }
-        //}
-        //if (hit) { 
-        //    actor.moving = false; 
-        //    break; 
-        //}
+        bool hit = false;
+        for (auto& b : B) {
+            if (CircleRectCollide(nextPos, actor.radius, b.r)) { hit = true; break; }
+        }
+        if (hit) { 
+            actor.moving = false; 
+            break; 
+        }
 
         actor.pos = nextPos;
         moved += thisStep;

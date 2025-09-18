@@ -5,9 +5,13 @@
 #include "raymath.h"
 
 
-
 struct Building {
     ::Rectangle r;
+};
+
+struct World {
+    float width{36};
+    float height{36};
 };
 
 struct Actor {

@@ -14,7 +14,7 @@ set(SRCS
   src/camera.cpp
   src/actions.cpp
   src/object.h
-  src/world.cppd
+  src/world.cpp
 )
 
 # raylib

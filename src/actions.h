@@ -10,7 +10,7 @@
 #include "raymath.h"
 
 static bool CircleRectCollide(Vector2 center, float radius, Rectangle rec);
-//const std::vector<Building>& B,
-void UpdateMouvement(Actor& actor,  float df);
+//
+void UpdateMouvement(Actor& actor,const std::vector<Building>& B,  float df);
 
 #endif
